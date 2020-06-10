@@ -1,0 +1,474 @@
+小程序
+创建文件目录
+
+app.json里，在pages里编写对应的路径，可以自动在pages文件夹下 创建对应的文件夹
+
+app.json里，在window下可以改变页面：头部背景颜色，头部文字颜色...等
+
+tabbar里，可以控制页脚
+
+xxx.json里，可以控制页面单独的配置样式
+
+<text>标签相当于web中的<span>元素
+<view>标签相当于web中的<div>元素
+
+xxx.js中的data是存放数据的位置，可以在页面中通过{{}}来调用
+
+循环
+wx:for="{{数组或者对象}}"
+wx:for-item="循环项的名称"
+wx:for-index="循环项的索引"
+
+key
+wx:key 绑定唯一标识
+wx:key="*this"  就标识 你的数组 是一个普通的数组 *this表示是 循环项
+当出现数组的嵌套循环时 尤其要注意 绑定的名称不要重名
+默认情况下 只有一层循环的话 wx:for-item 和 wx:index 可以省略
+如果省略 循环项的名称 和 索引项 默认为 item 和 index
+
+对象循环
+wx:for="{{对象}}"   wx:for-item="对象的值"  wx:for-index="对象的属性"
+循环对象的时候 最好把 item 和 index 的名称改一下
+wx:for-item="value"     wx:for-index="key"
+
+block
+block是一个占位符
+写代码的时候 可以看到这个标签的存在
+渲染的时候 会把这个值移除掉
+
+条件渲染
+1.wx:if
+wx:if="true/false"
+if = wx:if
+else = wx:elif
+if else = wx:else
+
+2.hidden
+在标签上直接加上属性 hidden
+hidden="{{true}}"
+不要在标签上使用display属性
+
+3. 什么场景下使用哪个？
+    1.当标签不是频繁的切换显示 优先使用 wx:if
+    2.当标签频繁的切换显示的时候 优先使用hidden
+
+事件绑定：
+1.需要给input绑定 input事件
+    绑定关键字 bindinput
+2.如何获取 输入框的值
+    通过事件源对象来获取
+    e.detail.value
+3.把输入框的值 赋值到 data中
+    不能直接
+        1.this.data.num = e.detail.value
+        2.this.num = e.detail.value
+    应该
+        this,setData({
+
+        })
+
+点击事件
+1.bindtap
+2.无法在小程序当中的 事件中 直接传参
+3.通过自定义属性的方式来传递参数
+
+样式
+1.在小程序中 是不需要手动引入样式文件
+2.需要把页面中某些元素的单位 由 px 改成 rpx ， 默认让所有屏幕视窗下都为rpx
+    1.设计稿 750px
+        750px = 750px
+        1px = 1px
+    2.把屏幕宽度改成375
+        375px = 750rpx
+        1px = 2rpx
+        1rpx = 0.5px
+    3.存在一个设计稿 宽度 414 或者 未知 page
+        1.设计稿 page 存在一个元素 宽度100px
+        2.拿以上的需求 去实现 不同宽度的页面适配
+
+        page px = 750 rpx
+        1px = 750rpx / page
+        100px = 750 rpx * 100 / page
+
+    4.利用 一个属性 calc属性 css 和 wxss 都支持 一个属性
+        1.750 和 rpx 中间不要留空格
+        2.运算符的两边也不要留空格
+
+    css:width:calc(750rpx * 100 / 375)
+
+引入样式
+通过@import '../../xxx.wxss'    来引入外部样式
+
+在wxss里 不可以使用 通配符*
+
+wxml 标签：
+
+view 代替 div
+
+text 代替 span  
+属性：selectable  长按文字可以复制
+
+img标签
+土豆图床可以秒速将本地图片变为网络图片
+image图片标签
+1.src 制定要加载的图片的路径
+图片存在默认的宽度和高度 320 * 240  原图大小是 200 * 100
+2.mode 决定图片内容 如何 和 图片标签 宽高做适配
+    1.scaleToFill 默认值 不保持纵横比缩放图片，使图片的宽高完全拉伸至填满image元素
+    2.aspectFit 保持宽高比 确保图片的长边 显示出来  做轮播图时常用。    常用
+    3.aspectFill 保持纵横比缩放图片，只保证图片的短边 能完全显示出来。  少用
+    4.widthFix 以前web图片的 宽度指定了之后 高度 会自己按比例来调整     常用
+3.小程序当中的图片 直接支持懒加载   lazy-load
+    1.lazy-load 会自己判断图片出现在视口 上下 三屏高度之内的时候 自己加载图片
+
+swiper标签
+    1.轮播图外层容器    swiper
+    2.每一个轮播项  swiper-item
+    3.swiper标签  存在默认样式
+        1.width:100%
+        2.height:150px    image   存在默认宽度和高度  320 * 240
+        3.swiper    高度无法实现由内容撑开
+    4.先找出来 原图的高度和宽度 等比例 给swiper 定 宽度和高度
+        原图的宽度和高度    520 * 280 px
+        swiper 宽度 / swiper 高度 = 原图的宽度 / 原图的高度
+        swiper 高度 = swiper 宽度 * 原图的高度 / 原图的宽度
+        height100vw * 352 / 1125
+    5. autoplay  自动轮播
+    6. interval  修改轮播时间
+    7. circular  自动衔接轮播
+    8. indicator-dots 显示 指示器 分页器 索引器
+    9. indicator-color 指示器的未选择的颜色
+    10. indicator-active-color 选中的时候颜色
+
+导航组件 navigator
+    0. 块级元素 默认会换行 可以直接加宽度和高度
+    1. url 要跳转的页面路径 绝对路径 相对路径
+    2. target 要跳转到当前的小程序 还是跳转到其他小程序
+        self 默认值 自己 小程序的页面
+        miniProgram 其他的小程序页面
+    3. open-type 跳转的方式
+        1. navigate 默认值 保留当前页面，跳转到应用内的某个页面，但是不能跳到 tabbar 页面
+        2. redirect 关闭当前页面，跳转到应用内某个页面，但是不允许跳转到 tabbar 页面
+        3. swotchTab 跳转到 tabBar 页面，并关闭其他所有非tabBar页面
+        4. reLaunch 关闭所有页面，打开到应用内的某个页面
+
+富文本标签 rich-text
+    1. nodes属性来实现
+        1. 接受标签字符串   最常用
+        2. 接受对象数组
+
+按钮标签 button
+    1. 外观属性
+        1.size 控制大小
+            1 defalt 默认大小
+            2 mini 小尺寸
+        2.type 控制按钮的颜色
+            1 defalt 灰色
+            2 primary 绿色
+            3 warn 红色
+            4 plain 按钮是否镂空，背景色透明
+    
+    2. 开放能力
+        button 开放能力
+        open-type
+            1 contact 直接打开 客服对话功能 需要在小程序的后台配置
+            2 share 转发当前的小程序 到微信朋友中 不能把小程序 分享到 朋友圈
+            3 getPhoneNumber 获取当前用户的手机号码信息 结合一个事件来使用  不是企业的小程序账号 没有权限来获取用户的手机号码
+                1 绑定一个事件 bindgetphonenumbe
+                2 在事件的回调函数中 通过参数来获取信息
+                3 获取到的信息  已经加密过了
+                需要用户自己待见小程序的后台服务器，在后台服务器中进行解析 手机号码，返回到小程序中 就可以看到信息了
+            4 getUserInfo 获取当前用户的个人信息
+                1 使用方法 类似 获取用户的手机号码
+                2 可以直接获取 不存在加密的字段
+            5 launchApp 在小程序当中 直接打开 app
+                1 需要现在 app中 通过app的某个链接 打开 小程序
+                2 在小程序中再通过 这个功能 重新打开 app
+                3 找到 京东的app 和 京东的小程序
+            6 openSetting 打开小程序内置的 授权页面
+                1 授权页面中 只会出现 用户曾经点击过的 权限
+            7 feedback 打开小程序内置的 意见反馈页面
+                1 只能够通过真机调试
+
+icon 小程序中的字体图标
+    1 type 图标的类型
+        success | success_no_circle | info | warn | waiting | cancel | download | search | clear
+    2 size 大小
+    3 color 图标颜色
+
+radio 单选框
+    1 radio标签 必须要和父元素 radio-group来使用
+    2 value 选中的单选框的值
+    3 需要给 radio-group 绑定 change 事件
+    4 需要在页面中显示 选中的值
+        1 获取单选框中的值
+        2 把值 赋值给 data中的数据
+
+自定义组件
+    1 在根目录下 创建 components文件，在里面创建四个组件文件
+    2 在父组件中的json文件中 引入子组件标签 格式为： 'key' : '../../components/path/path'
+    3 在父组件wxml中直接调用组件 <path />
+
+动态类型绑定
+    class="{{isloging?'active':''}}"
+
+方法
+    1 页面.js 文件中 存放时间回调函数的时候 存放在data同层级下！！！
+    2 组件.js 文件中 存放事件回调函数的时候 必须要存在在methods
+
+    1 绑定点击事件 需要在methods中绑定
+    2 获取被点击的索引
+    3 获取原数组
+    4 对数组循环
+        1 给每一个循环项 选中属性改为false
+        2 给当前的索引的 项 添加激活选中效果就可以了！！！
+
+    小程序不建议直接对data里的数据进行操作
+    最严谨的做法 重新拷贝一份 数组，在对这个数组的备份进行处理
+    let tabs = JSON.parse(JSON.stringify(this.data.tabs))
+    不要直接修改this.data.数据
+
+传值
+    父向子
+        1 父组件 向 子组件 传递数据 通过 标签属性的方式来传递
+        2 在子组件上进行接受    properties 里面存放的是 要从父组件中接受的数据
+            aaa:{
+                type:   ,// 要接受数据的类型
+                value:  , // 默认值
+            }
+        3 把这个数据当成是data中的数据 直接使用
+
+    子向父
+        子向父传递数据 通过事件的方法传递
+        this.triggerEvent("名称",要传递的参数)
+
+slot 标签 其实就是一个占位符 插槽
+等到父组件调用子组件的时候 在传递标签过来 最终这些被传递的标签
+就会替换slot插槽的位置
+
+组件生命周期
+created         组件刚刚被创建时执行，注意此时不能使用setData
+attached        组件生命周期，在组件实例进入页面节点树时执行，参见
+ready           在组件布局完成后执行
+moved           在组件实例被移动到节点树另一个位置时执行
+detached        在组件实例被从页面节点移除时执行
+
+应用生命周期
+onLaunch            监听小程序初始化            1 应用第一次启动的就会触发的事件        作用：获取用户的个人信息
+onShow              监听小程序启动或切前台       2 应用 被用户看到                      作用：对应用的数据或者页面的效果 重置
+onHide              监听小程序切后台            3 应用 被隐藏了                         作用：暂停或者清除定时器
+onError             错误监听函数                4 应用的代码发生了错误的时候 就会触发   作用：在应用发生错误代码的时候，收集用户的错误信息，通过异步请求 将错误的信息发送后台去
+onPageNotFound      页面不存在监听函数          5 页面找不到就会触发                    作用：应用第一次启动的时候，如果找不到第一个入口页面 才会触发
+
+js的方式跳转页面
+wx.navigateTo({
+    url:''
+})
+
+页面生命周期
+data                    页面的初始数据
+onLoad                  监听页面加载                        onLoad发送异步请求来初始化页面数据
+onShow                  监听页面显示                        
+onReady                 监听页面初次渲染完成                  
+onHide                  监听页面隐藏
+onUnload                监听页面卸载
+onPullDownRefresh       监听用户下拉动作                    页面的数据 或者效果 重新 刷新                                                   
+onReachBottom           页面上拉触底事件的处理函数           上拉加载下一页数据
+onShareAppMessage       用户点击右上角转发                  
+onPageScroll            页面滚动触发事件的处理函数
+onResize                页面尺寸改变时触发
+onTabItemTap            当前是tab页时，点击tab时触发
+
+小程序第三方框架：
+1 腾讯 wepy             类似vue
+2 美团 mpvue            类似vue
+3 京东 taro             类似react
+4 滴滴 chameleon    
+5 uni-app               类似vue
+6 原生框架              MiNa
+
+目录结构：
+styles                  存放公共样式
+components              存放组件
+lib                     存放第三方库
+utils                   自己的帮助库
+request                 自己的接口帮助库
+
+搭建项目的页面
+
+首页            index
+分类页面        category
+商品列表页      goods_list
+商品详情页      goos_detail
+购物车页面      cart
+收藏页面        collect
+订单页面        order
+搜索页面        search
+个人中心页面    user
+意见反馈页面    feedback
+登录页面        login
+授权页面        auth
+结算页面        pay 
+
+
+主题颜色 通过变量来实现
+1 less 中存在变量 这个知识
+2 原生css和wxss也是支持 变量
+
+父css
+/* 主题颜色 通过变量来实现 */
+page {
+  --themeColor:red
+}
+
+子css
+调用变量
+view {
+    color:var(--themeColor)
+}
+
+请求数据：
+1. 找到需要请求数据的页面js
+2. data定义一个空数组
+3. 找到onLoad钩子函数
+4. wx.request微信请求方法
+
+
+1 swiper标签已经存在默认的宽度和高度
+    100% * 150px
+2 image标签页存在默认的宽度和高度
+    320px * 240px
+3 设计图片和轮播图
+    1 先看一下原图宽高 750 * 340
+    2 让图片的高度自适应 宽度 等于 100%
+    3 让swiper标签的高度 变成和图片一样的高度即可
+4 图片属性
+    mode属性 渲染模式
+        widthFix    让图片的标签宽高 和 图片标签的内容 的宽高 都等比例的发生变化
+
+请求优化
+1 发送异步请求获取轮播图数据 优化的手段可以通过ES6的 promise来解决这个问题
+
+封装
+export const request = (params) => {
+    return new Promise((res,err) => {
+        wx.request({
+           ...params,
+           success:()=>{
+               resolve(res);
+           },
+           fail:()=>{
+               reject(err);
+           }
+        });
+    })
+}
+
+微信小程序存储数据
+思路
+0   web中的本地存储和小程序中的本地存储的 区别
+    1 写代码的方式不一样了
+        web:localStorage.setItem("key"."value")
+            localStorage.getItem("key")
+        小程序中:wx.setStorageSync('key','value')
+            wx.setStorageSync('key')
+    2 存的时候 有没有类型转换
+        web:不管存入的是什么类型的数据，最终都会先调用下toString(),把数据变成字符串，再存入数据
+        小程序:不存在 类型转换的这个操作 存什么类型的数据进去，获取的时候就是什么类型
+
+
+
+1   先判断一下本地存储中有没有旧的数据
+    {time:Date.now(),data:[...]}
+
+2   没有旧数据 直接发送请求
+
+3   有旧数据 同时旧数据也没有过期 就是用本地存储中的旧数据即可
+
+
+微信小程序使用es7语法
+1 使用es7的async 和 await 
+
+
+下拉刷新 上拉加载 思路
+1 用户上滑页面 滚动条触底 开始加载下一页数据
+    1 找到滚动条触底事件 微信小程序官方开发文档寻找
+    2 判断还有没有下一页数据
+        1 获取到总页数 只有总条数
+          总页数 = Math.ceil(总条数 / 页容量 )
+          总页数 = Math.ceil(23 / 10) = 3
+        2 获取到当前的页码
+        3 判断一下 当前的页码是否大于等于 总页数
+          表示 没有下一页数据
+
+    3 假如没有下一页数据 弹出一个提示
+    4 假如还有下一页数据 来加载下一页数据
+        1 当前页码 ++
+        2 重新发送请求
+        3 数据请求回来 要对data中的数组 进行 拼接 而不是全部替换！！！
+2 下拉刷新
+    1 触发下拉刷新事件 需要在页面的json文件中 开启一个配置项
+        找到触发下拉刷新的事件
+    2 重置 数据 数组
+    3 重置页码 设置为1
+    4 重新发送请求
+    5 数据请求回来了 手动关闭刷新效果
+
+数据格式里 可能存在webp格式图片
+但是iphone部分手机不识别webp图片格式
+最好找后台 让他进行修改
+临时自己修改 确保后台存在 1.webp 2.jdb
+
+商品详情页
+1 发送请求获取数据
+2 点击轮播图 预览大图
+    1 给轮播图绑定点击事件
+    2 调用小程序的api   previewImage
+3 点击加入购物车
+    1 先绑定点击事件
+    2 获取缓存中的购物车数据 数据格式
+    3 先判断 当前的商品是否已经存在于 购物车
+    4 已存在 修改商品数据 执行购物车数据++  重新把购物车数组 填充回缓存中
+    5 不存在于购物车数组中 直接给购物车数组添加一个新元素即可 新元素 带上一个购买数量属性 num
+    6 弹出一些用户提示
+
+1 获取用户的收货地址
+    1 绑定点击事件
+    2 调用小程序内置 api 获取用户的收货地址  wx.chooseAddress
+
+    2 获取 用户 对小程序 所授予 获取地址的 权限 状态 scope
+        1 假设 用户 点击获取收获地址的提示框 确定 authSetting scope.address
+            scope 值 true 直接调用 获取收获地址
+        2 假设 用户 从来没有调用过 收货地址的api
+            scope 之 undefined  直接调用 获取收获地址
+
+        3 假设 用户 点击获取收获地址的消息框 取消
+            scope 值 false 
+            1 诱导用户自己打开授权设置页面(wx.openSetting) 当用户重新给与获取地址权限的时候
+            2 获取收获地址
+        4 把获取到的收货地址，存入到 本地存储中
+
+2 页面加载完毕
+    0 onLoad onShow
+    1 获取本地存储中的地址数据
+    2 把数据设置给data中的一个变量
+3 onShow
+    1 获取缓存中的购物车数组
+    2 把购物车数据 填充到data中
+4 全选的实现
+    1 onshow 获取缓存中的购物车数组
+    2 根据购物车中的商品数据 所有的商品都被选中 checked = true 全选就被选中
+5 总价格和总数量
+    1 都需要商品被选中 我们才拿它来计算
+    2 获取到购物车的数组
+    3 遍历
+    4 判断商品是否被选中
+    5 总价格 += 商品的单价 * 商品的数量
+    6 总数量 += 商品的数量
+    7 把计算后的价格和数量 设置回data中即可
+6 商品的选中
+    1 绑定change事件
+    2 获取到被修改的商品对象
+    3 商品对象的选中状态 取反
+    4 重新填充回data中的缓存中
+    5 重新计算全选。总价格 总数量。。
